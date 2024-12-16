@@ -108,26 +108,26 @@ VALUES
 -- Insert students
 INSERT INTO Students (FirstName, LastName, PersonalNumber)
 VALUES
-('Aaron', 'Adams', 100001),
-('Betty', 'Baker', 100002),
-('Cathy', 'Carter', 100003),
-('David', 'Davis', 100004),
-('Ella', 'Evans', 100005),
-('Frank', 'Ford', 100006),
-('Grace', 'Green', 100007),
-('Harry', 'Hall', 100008),
-('Ivy', 'Irwin', 100009),
-('Jack', 'Jones', 100010),
-('Kara', 'King', 100011),
-('Liam', 'Lewis', 100012),
-('Mia', 'Martin', 100013),
-('Noah', 'Nelson', 100014),
-('Olivia', 'Owens', 100015),
-('Peter', 'Parker', 100016),
-('Quinn', 'Quincy', 100017),
-('Rachel', 'Reed', 100018),
-('Sam', 'Smith', 100019),
-('Tina', 'Turner', 100020);
+('Aaron', 'Adams', 200403159566),
+('Betty', 'Baker', 200402183464),
+('Cathy', 'Carter', 200410179779),
+('David', 'Davis', 200408272921),
+('Ella', 'Evans', 200406226725),
+('Frank', 'Ford', 200403025461),
+('Grace', 'Green', 200404195266),
+('Harry', 'Hall', 200408034476),
+('Ivy', 'Irwin', 200409263843),
+('Jack', 'Jones', 200406173588),
+('Kara', 'King', 200405285521),
+('Liam', 'Lewis', 200405163667),
+('Mia', 'Martin', 200410154509),
+('Noah', 'Nelson', 200404069740),
+('Olivia', 'Owens', 200402261238),
+('Peter', 'Parker', 200405197824),
+('Quinn', 'Quincy', 200408250249),
+('Rachel', 'Reed', 200403166288),
+('Sam', 'Smith', 200403248523),
+('Tina', 'Turner', 200404181512);
 
 -- Insert courses
 INSERT INTO Courses (CourseName)

@@ -81,7 +81,7 @@ VALUES
 ('Language Teacher', 45000),
 ('Business Teacher', 45000),
 ('Social Studies Teacher', 45000);
-
+GO
 
 -- Insert staff
 INSERT INTO Staff (FirstName, LastName, RoleId)
@@ -106,6 +106,7 @@ VALUES
 ('Riley', 'White', 18),
 ('Sophia', 'Harris', 19),
 ('Tom', 'Clark', 20);
+GO
 
 -- Insert students
 INSERT INTO Students (FirstName, LastName, PersonalNumber)
@@ -130,6 +131,7 @@ VALUES
 ('Rachel', 'Reed', 200403166288),
 ('Sam', 'Smith', 200403248523),
 ('Tina', 'Turner', 200404181512);
+GO
 
 -- Insert courses
 INSERT INTO Courses (CourseName)
@@ -144,6 +146,7 @@ VALUES
 ('Computer Science 101'),
 ('Business 101'),
 ('Social Studies 101');
+GO
 
 -- Insert enrolments with grades
 DECLARE @Today DATETIME = GETDATE();
@@ -171,3 +174,48 @@ VALUES
 (8, 18, 10, 'C', DATEADD(DAY, -12, @Today)),
 (9, 19, 11, 'A', DATEADD(DAY, -15, @Today)),
 (10, 20, 12, 'B', DATEADD(DAY, -19, @Today));
+GO
+
+-- Hur mycket betalar respektive avdelning ut i lön varje månad? (SQL i SSMS)
+-- What's the sum of wages from each department/role?
+SELECT R.RoleName AS Department, SUM(R.RoleMonthlyPay) AS MonthlyPayout
+FROM Staff S
+JOIN Roles R
+ON S.RoleId = R.RoleId
+GROUP BY R.RoleName
+ORDER BY MonthlyPayout DESC;
+GO
+
+-- Hur mycket är medellönen för de olika avdelningarna? (SQL i SSMS)
+-- What's the average pay of each department/role?
+SELECT R.RoleName AS Department, AVG(R.RoleMonthlyPay) AS AverageSalary
+FROM Staff S
+JOIN Roles R
+ON S.RoleId = R.RoleId
+GROUP BY R.RoleName
+ORDER BY AverageSalary DESC;
+GO
+
+-- Skapa en Stored Procedure som tar emot ett Id och returnerar viktig information om den elev som är registrerad med aktuellt id (SQL i SSMS)
+-- Create a Stored Procedure that receives an ID and returns important information about the student who is registered with the current ID
+CREATE PROCEDURE GetStudentInfo
+    @StudentId INT
+AS
+BEGIN
+	-- Hämtar grundläggande information om studenten
+	-- Retrieves basic information about the student
+	SELECT S.StudentId, S.FirstName + ' ' + S.LastName AS FullName, S.PersonalNumber
+	FROM Students S
+	WHERE S.StudentId = @StudentId;
+
+	-- Hämtar kursinformation och betyg för studenten
+	-- Retrieves course information and grades for the student
+	SELECT C.CourseName, E.Grade, E.GradeDate
+	FROM Enrolment E
+	JOIN Courses C ON E.CourseId = C.CourseId
+	WHERE E.StudentId = @StudentId;
+END;
+GO
+
+-- Sätt betyg på en elev genom att använda Transactions ifall något går fel (SQL i SSMS)
+-- Grade a student using Transactions in case something goes wrong

@@ -204,6 +204,7 @@ ORDER BY AverageSalary DESC;
 GO
 
 -- Create a Stored Procedure that receives an ID and returns important information about the student who is registered with the current ID
+-- Example: EXEC GetStudentInfo @StudentId = 1;
 CREATE PROCEDURE GetStudentInfo
     @StudentId INT
 AS

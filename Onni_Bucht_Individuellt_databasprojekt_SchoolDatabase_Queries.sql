@@ -11,7 +11,8 @@ GO
 -- Creates the roles table
 CREATE TABLE Roles(
 	RoleId INT PRIMARY KEY IDENTITY(1,1),
-	RoleName NVARCHAR(50)
+	RoleName NVARCHAR(50) NOT NULL,
+	RoleMonthlyPay INT NOT NULL
 );
 GO
 
@@ -57,29 +58,30 @@ CREATE TABLE Enrolment(
 );
 GO
 
--- Insert roles
-INSERT INTO Roles (RoleName)
+-- Insert roles with corresponding monthly pay
+INSERT INTO Roles (RoleName, RoleMonthlyPay)
 VALUES 
-('Principal'),
-('Vice Principal'),
-('Math Teacher'),
-('English Teacher'),
-('History Teacher'),
-('Science Teacher'),
-('Physical Education Teacher'),
-('Art Teacher'),
-('Music Teacher'),
-('Computer Science Teacher'),
-('Librarian'),
-('Counselor'),
-('Nurse'),
-('Janitor'),
-('Secretary'),
-('Administrator'),
-('Substitute Teacher'),
-('Language Teacher'),
-('Business Teacher'),
-('Social Studies Teacher');
+('Principal', 55000),
+('Vice Principal', 50000),
+('Math Teacher', 45000),
+('English Teacher', 45000),
+('History Teacher', 45000),
+('Science Teacher', 45000),
+('Physical Education Teacher', 40000),
+('Art Teacher', 40000),
+('Music Teacher', 40000),
+('Computer Science Teacher', 45000),
+('Librarian', 35000),
+('Counselor', 35000),
+('Nurse', 35000),
+('Janitor', 30000),
+('Secretary', 30000),
+('Administrator', 40000),
+('Substitute Teacher', 35000),
+('Language Teacher', 45000),
+('Business Teacher', 45000),
+('Social Studies Teacher', 45000);
+
 
 -- Insert staff
 INSERT INTO Staff (FirstName, LastName, RoleId)

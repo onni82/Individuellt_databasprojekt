@@ -176,7 +176,15 @@ VALUES
 (10, 20, 12, 'B', DATEADD(DAY, -19, @Today));
 GO
 
--- Hur mycket betalar respektive avdelning ut i lön varje månad? (SQL i SSMS)
+-- The school wants to be able to produce an overview of all staff,
+-- which shows their names and the positions they hold,
+-- as well as how many years they have worked at the school. The administrator also wants to be able to save new staff
+
+-- We want to save students and see which class they are in.
+-- We want to be able to save grades for a student in each course they read
+-- and we want to be able to see which teacher gave the grade.
+--  Grades must also have a date on which they were set.
+
 -- What's the sum of wages from each department/role?
 SELECT R.RoleName AS Department, SUM(R.RoleMonthlyPay) AS MonthlyPayout
 FROM Staff S
@@ -186,7 +194,6 @@ GROUP BY R.RoleName
 ORDER BY MonthlyPayout DESC;
 GO
 
--- Hur mycket är medellönen för de olika avdelningarna? (SQL i SSMS)
 -- What's the average pay of each department/role?
 SELECT R.RoleName AS Department, AVG(R.RoleMonthlyPay) AS AverageSalary
 FROM Staff S
@@ -196,19 +203,16 @@ GROUP BY R.RoleName
 ORDER BY AverageSalary DESC;
 GO
 
--- Skapa en Stored Procedure som tar emot ett Id och returnerar viktig information om den elev som är registrerad med aktuellt id (SQL i SSMS)
 -- Create a Stored Procedure that receives an ID and returns important information about the student who is registered with the current ID
 CREATE PROCEDURE GetStudentInfo
     @StudentId INT
 AS
 BEGIN
-	-- Hämtar grundläggande information om studenten
 	-- Retrieves basic information about the student
 	SELECT S.StudentId, S.FirstName + ' ' + S.LastName AS FullName, S.PersonalNumber
 	FROM Students S
 	WHERE S.StudentId = @StudentId;
 
-	-- Hämtar kursinformation och betyg för studenten
 	-- Retrieves course information and grades for the student
 	SELECT C.CourseName, E.Grade, E.GradeDate
 	FROM Enrolment E
@@ -217,5 +221,38 @@ BEGIN
 END;
 GO
 
--- Sätt betyg på en elev genom att använda Transactions ifall något går fel (SQL i SSMS)
 -- Grade a student using Transactions in case something goes wrong
+BEGIN TRY
+	BEGIN TRANSACTION;
+
+	-- Variabler för att hålla betyget och annan information
+	DECLARE @EnrolmentId INT = 1;  -- Exempel-ID för en kursregistrering
+	DECLARE @NewGrade CHAR(1) = 'B';  -- Det nya betyget
+	DECLARE @GradeDate DATETIME = GETDATE();  -- Dagens datum
+
+	-- Kontrollera om registreringen existerar
+	IF NOT EXISTS (SELECT 1 FROM Enrolment WHERE EnrolmentId = @EnrolmentId)
+	BEGIN
+		THROW 50000, 'Ingen kursregistrering hittades med detta ID.', 1;
+	END
+
+	-- Uppdatera betyget i tabellen
+	UPDATE Enrolment
+	SET Grade = @NewGrade, GradeDate = @GradeDate
+	WHERE EnrolmentId = @EnrolmentId;
+
+	-- Kontrollera om uppdateringen påverkade någon rad
+	IF @@ROWCOUNT = 0
+	BEGIN
+		THROW 50001, 'Uppdatering misslyckades av okänd anledning.', 1;
+	END
+
+	-- Bekräfta transaktionen
+	COMMIT TRANSACTION;
+	PRINT 'Betyget har uppdaterats framgångsrikt.';
+END TRY
+BEGIN CATCH
+	-- Om något gick fel, rulla tillbaka transaktionen
+	ROLLBACK TRANSACTION;
+	PRINT 'Ett fel inträffade: ' + ERROR_MESSAGE();
+END CATCH;

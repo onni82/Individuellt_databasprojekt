@@ -180,7 +180,10 @@ GO
 -- The school wants to be able to produce an overview of all staff,
 -- which shows their names and the positions they hold,
 -- as well as how many years they have worked at the school. The administrator also wants to be able to save new staff
-SELECT CONCAT(FirstName, ' ', LastName) AS FullName, Roles.RoleName AS Position, DATEDIFF(YEAR, HireDate, GETDATE()) AS YearsWorked
+SELECT
+	CONCAT(FirstName, ' ', LastName) AS FullName,
+	Roles.RoleName AS Position,
+	DATEDIFF(YEAR, HireDate, GETDATE()) AS YearsWorked
 FROM Staff
 JOIN Roles ON Staff.RoleId = Roles.RoleId
 ORDER BY YearsWorked DESC;
@@ -192,16 +195,19 @@ GO
 -- Grades must also have a date on which they were set.
 
 -- What's the sum of wages from each department/role?
-SELECT R.RoleName AS Department, SUM(R.RoleMonthlyPay) AS MonthlyPayout
+SELECT
+	R.RoleName AS Department,
+	SUM(R.RoleMonthlyPay) AS MonthlyPayout
 FROM Staff S
-JOIN Roles R
-ON S.RoleId = R.RoleId
+JOIN Roles R ON S.RoleId = R.RoleId
 GROUP BY R.RoleName
 ORDER BY MonthlyPayout DESC;
 GO
 
 -- What's the average pay of each department/role?
-SELECT R.RoleName AS Department, AVG(R.RoleMonthlyPay) AS AverageSalary
+SELECT
+	R.RoleName AS Department,
+	AVG(R.RoleMonthlyPay) AS AverageSalary
 FROM Staff S
 JOIN Roles R
 ON S.RoleId = R.RoleId
@@ -216,12 +222,18 @@ CREATE PROCEDURE GetStudentInfo
 AS
 BEGIN
 	-- Retrieves basic information about the student
-	SELECT S.StudentId, S.FirstName + ' ' + S.LastName AS FullName, S.PersonalNumber
+	SELECT
+		S.StudentId,
+		S.FirstName + ' ' + S.LastName AS FullName,
+		S.PersonalNumber
 	FROM Students S
 	WHERE S.StudentId = @StudentId;
 
 	-- Retrieves course information and grades for the student
-	SELECT C.CourseName, E.Grade, E.GradeDate
+	SELECT
+		C.CourseName,
+		E.Grade,
+		E.GradeDate
 	FROM Enrolment E
 	JOIN Courses C ON E.CourseId = C.CourseId
 	WHERE E.StudentId = @StudentId;

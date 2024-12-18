@@ -85,28 +85,28 @@ VALUES
 GO
 
 -- Insert staff
-INSERT INTO Staff (FirstName, LastName, RoleId)
+INSERT INTO Staff (FirstName, LastName, HireDate, RoleId)
 VALUES
-('Alice', 'Smith', 1),
-('Bob', 'Johnson', 2),
-('Charlie', 'Williams', 3),
-('Diana', 'Brown', 4),
-('Evan', 'Jones', 5),
-('Fiona', 'Garcia', 6),
-('George', 'Martinez', 7),
-('Hannah', 'Rodriguez', 8),
-('Ian', 'Hernandez', 9),
-('Julia', 'Lopez', 10),
-('Kevin', 'Gonzalez', 11),
-('Laura', 'Wilson', 12),
-('Mike', 'Anderson', 13),
-('Nina', 'Thomas', 14),
-('Oscar', 'Moore', 15),
-('Paula', 'Taylor', 16),
-('Quinn', 'Jackson', 17),
-('Riley', 'White', 18),
-('Sophia', 'Harris', 19),
-('Tom', 'Clark', 20);
+('Alice', 'Smith', '2000-08-15', 1),
+('Bob', 'Johnson', '2002-03-10', 2),
+('Charlie', 'Williams', '2005-09-01', 3),
+('Diana', 'Brown', '2007-04-15', 4),
+('Evan', 'Jones', '2009-06-20', 5),
+('Fiona', 'Garcia', '2011-11-05', 6),
+('George', 'Martinez', '2013-08-10', 7),
+('Hannah', 'Rodriguez', '2015-01-25', 8),
+('Ian', 'Hernandez', '2016-09-15', 9),
+('Julia', 'Lopez', '2017-12-10', 10),
+('Kevin', 'Gonzalez', '2018-05-20', 11),
+('Laura', 'Wilson', '2019-07-15', 12),
+('Mike', 'Anderson', '2020-02-10', 13),
+('Nina', 'Thomas', '2021-03-25', 14),
+('Oscar', 'Moore', '2022-10-10', 15),
+('Paula', 'Taylor', '2023-01-05', 16),
+('Quinn', 'Jackson', '2023-05-15', 17),
+('Riley', 'White', '2023-08-20', 18),
+('Sophia', 'Harris', '2023-11-05', 19),
+('Tom', 'Clark', '2023-12-01', 20);
 GO
 
 -- Insert students

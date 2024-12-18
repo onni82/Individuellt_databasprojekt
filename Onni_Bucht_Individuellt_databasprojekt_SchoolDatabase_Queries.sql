@@ -180,6 +180,11 @@ GO
 -- The school wants to be able to produce an overview of all staff,
 -- which shows their names and the positions they hold,
 -- as well as how many years they have worked at the school. The administrator also wants to be able to save new staff
+SELECT CONCAT(FirstName, ' ', LastName) AS FullName, Roles.RoleName AS Position, DATEDIFF(YEAR, HireDate, GETDATE()) AS YearsWorked
+FROM Staff
+JOIN Roles ON Staff.RoleId = Roles.RoleId
+ORDER BY YearsWorked DESC;
+GO
 
 -- We want to save students and see which class they are in.
 -- We want to be able to save grades for a student in each course they read

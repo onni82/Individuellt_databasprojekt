@@ -189,7 +189,20 @@ JOIN Roles ON Staff.RoleId = Roles.RoleId
 ORDER BY YearsWorked DESC;
 GO
 
+-- Create a stored procedure to add new staff
+CREATE PROCEDURE AddStaff
+	@FirstName NVARCHAR(50),
+	@LastName NVARCHAR(50),
+	@HireDate DATE,
+	@RoleId INT
+AS
+BEGIN
+	INSERT INTO Staff (FirstName, LastName, HireDate, RoleId)
+	VALUES (@FirstName, @LastName, @HireDate, @RoleId)
 
+	PRINT 'New staff member added successfully.';
+END;
+GO
 
 -- We want to save students and see which class they are in.
 -- We want to be able to save grades for a student in each course they read

@@ -1,14 +1,14 @@
 -- Create the database in SQL Server Management Studio (SSMS). The database you create must follow your ER model.
 
--- Creates the database
+-- Creates the database.
 CREATE DATABASE School;
 GO
 
--- Using the database
+-- Using the database.
 USE School;
 GO
 
--- Creates the roles table
+-- Creates the roles table.
 CREATE TABLE Roles(
 	RoleId INT PRIMARY KEY IDENTITY(1,1),
 	RoleName NVARCHAR(50) NOT NULL,
@@ -16,8 +16,8 @@ CREATE TABLE Roles(
 );
 GO
 
--- Creates the staff table
--- Has an FK that refers to the roles table
+-- Creates the staff table.
+-- Has an FK that refers to the roles table.
 CREATE TABLE Staff(
 	StaffId INT PRIMARY KEY IDENTITY(1,1),
 	FirstName NVARCHAR(50) NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE Staff(
 );
 GO
 
--- Creates the students table
+-- Creates the students table.
 CREATE TABLE Students(
 	StudentId INT PRIMARY KEY IDENTITY(1,1),
 	FirstName NVARCHAR(50) NOT NULL,
@@ -37,15 +37,15 @@ CREATE TABLE Students(
 );
 GO
 
--- Creates the courses table
+-- Creates the courses table.
 CREATE TABLE Courses(
 	CourseId INT PRIMARY KEY IDENTITY(1,1),
 	CourseName NVARCHAR(50) NOT NULL
 );
 GO
 
--- Creates the enroment table
--- It has FKs pointing to the Students table, Courses table and to the staff who set the grade
+-- Creates the enroment table.
+-- It has FKs pointing to the Students table, Courses table and to the staff who set the grade.
 CREATE TABLE Enrolment(
 	EnrolmentId INT PRIMARY KEY IDENTITY(1,1),
 	CourseId INT NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE Enrolment(
 );
 GO
 
--- Insert roles with corresponding monthly pay
+-- Insert roles with corresponding monthly pay.
 INSERT INTO Roles (RoleName, RoleMonthlyPay)
 VALUES 
 ('Principal', 55000),
@@ -84,7 +84,7 @@ VALUES
 ('Social Studies Teacher', 45000);
 GO
 
--- Insert staff
+-- Insert staff.
 INSERT INTO Staff (FirstName, LastName, HireDate, RoleId)
 VALUES
 ('Alice', 'Smith', '2000-08-15', 1),
@@ -109,7 +109,7 @@ VALUES
 ('Tom', 'Clark', '2023-12-01', 20);
 GO
 
--- Insert students
+-- Insert students.
 INSERT INTO Students (FirstName, LastName, PersonalNumber)
 VALUES
 ('Aaron', 'Adams', 200403159566),
@@ -134,7 +134,7 @@ VALUES
 ('Tina', 'Turner', 200404181512);
 GO
 
--- Insert courses
+-- Insert courses.
 INSERT INTO Courses (CourseName)
 VALUES
 ('Math 101'),
@@ -149,7 +149,7 @@ VALUES
 ('Social Studies 101');
 GO
 
--- Insert enrolments with grades
+-- Insert enrolments with grades.
 DECLARE @Today DATETIME = GETDATE();
 DECLARE @LastMonth DATETIME = DATEADD(MONTH, -1, @Today);
 
@@ -179,7 +179,8 @@ GO
 
 -- The school wants to be able to produce an overview of all staff,
 -- which shows their names and the positions they hold,
--- as well as how many years they have worked at the school. The administrator also wants to be able to save new staff
+-- as well as how many years they have worked at the school.
+-- The administrator also wants to be able to save new staff.
 SELECT
 	CONCAT(FirstName, ' ', LastName) AS FullName,
 	Roles.RoleName AS Position,
@@ -189,7 +190,7 @@ JOIN Roles ON Staff.RoleId = Roles.RoleId
 ORDER BY YearsWorked DESC;
 GO
 
--- Create a stored procedure to add new staff
+-- Create a stored procedure to add new staff.
 -- Example code:
 -- EXEC AddStaff 
 --     @FirstName = 'John', 
@@ -255,13 +256,13 @@ GROUP BY R.RoleName
 ORDER BY AverageSalary DESC;
 GO
 
--- Create a Stored Procedure that receives an ID and returns important information about the student who is registered with the current ID
+-- Create a Stored Procedure that receives an ID and returns important information about the student who is registered with the current ID.
 -- Example: EXEC GetStudentInfo @StudentId = 1;
 CREATE PROCEDURE GetStudentInfo
     @StudentId INT
 AS
 BEGIN
-	-- Retrieves basic information about the student
+	-- Retrieves basic information about the student.
 	SELECT
 		S.StudentId,
 		S.FirstName + ' ' + S.LastName AS FullName,
@@ -269,7 +270,7 @@ BEGIN
 	FROM Students S
 	WHERE S.StudentId = @StudentId;
 
-	-- Retrieves course information and grades for the student
+	-- Retrieves course information and grades for the student.
 	SELECT
 		C.CourseName,
 		E.Grade,
@@ -280,26 +281,26 @@ BEGIN
 END;
 GO
 
--- Grade a student using Transactions in case something goes wrong
+-- Grade a student using Transactions in case something goes wrong.
 BEGIN TRY
 	BEGIN TRANSACTION;
 
-	-- Variables for grade and other information
+	-- Variables for grade and other information.
 	DECLARE @EnrolmentId INT = 1;
 	DECLARE @NewGrade CHAR(1) = 'B';
 	DECLARE @GradeDate DATETIME = GETDATE();
 
-	-- Update the grade in the table
+	-- Update the grade in the table.
 	UPDATE Enrolment
 	SET Grade = @NewGrade, GradeDate = @GradeDate
 	WHERE EnrolmentId = @EnrolmentId;
 
-	-- Commit transaction
+	-- Commit transaction.
 	COMMIT TRANSACTION;
 	PRINT 'Betyget har uppdaterats framgångsrikt.';
 END TRY
 BEGIN CATCH
-	-- If something went wrong, rollback the transaction
+	-- If something went wrong, rollback the transaction.
 	ROLLBACK TRANSACTION;
 	PRINT 'Ett fel inträffade.';
 END CATCH

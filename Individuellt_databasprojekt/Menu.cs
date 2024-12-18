@@ -123,8 +123,8 @@ namespace Individuellt_databasprojekt
                 else if (int.TryParse(roleChoice, out int roleChoiceInt) && context.Roles.ToList().Any(r => r.RoleId == roleChoiceInt))
                 {
                     var staff = context.Staff.Where(s => s.RoleId == int.Parse(roleChoice)).ToList();
-                    // get staff rolename
-                    var staffRoleName = context.Roles.Where(r => r.RoleId == int.Parse(roleChoice)).Select(r => r.RoleName);
+                    // get staff Role.RoleName from first in staff
+                    string? staffRoleName = staff.First().Role.RoleName;
                     Console.WriteLine($"{staff.Count()} staff as {staffRoleName}");
 
                     foreach (var s in staff)
@@ -136,7 +136,6 @@ namespace Individuellt_databasprojekt
                 {
                     Console.WriteLine("Invalid choice");
                 }
-
             }
         }
 

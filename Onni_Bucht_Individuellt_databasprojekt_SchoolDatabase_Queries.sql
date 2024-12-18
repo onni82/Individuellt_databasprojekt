@@ -190,6 +190,13 @@ ORDER BY YearsWorked DESC;
 GO
 
 -- Create a stored procedure to add new staff
+-- Example code:
+-- EXEC AddStaff 
+--     @FirstName = 'John', 
+--     @LastName = 'Doe', 
+--     @HireDate = '2024-01-15', 
+--     @RoleId = 3;
+-- GO
 CREATE PROCEDURE AddStaff
 	@FirstName NVARCHAR(50),
 	@LastName NVARCHAR(50),

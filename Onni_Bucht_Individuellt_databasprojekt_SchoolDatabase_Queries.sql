@@ -221,7 +221,7 @@ GO
 --     @FirstName = 'John', 
 --     @LastName = 'Doe', 
 --     @PersonalNumber = 200404205623;
---     @CourseId = 1;
+--     @CourseId = 1; -- This will assign to Math 101
 -- GO
 CREATE PROCEDURE AddStudent
 	@FirstName NVARCHAR(50),
@@ -244,7 +244,25 @@ BEGIN
 END;
 GO
 
+-- Procedure to save grades for a student in a course
+CREATE PROCEDURE SaveGrade
+	@StudentId INT,
+	@CourseId INT,
+	@StaffId INT,
+	@Grade CHAR(1),
+	@GradeDate DATETIME
+AS
+BEGIN
+	-- Update the grade in the Enrolment table
+	UPDATE Enrolment
+	SET Grade = @Grade,
+		GradeDate = @GradeDate,
+		StaffId = @StaffId
+	WHERE StudentId = @StudentId AND CourseId = @CourseId;
 
+	PRINT 'Grade saved successfully';
+END;
+GO
 
 -- What's the sum of wages from each department/role?
 SELECT

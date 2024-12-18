@@ -245,6 +245,14 @@ END;
 GO
 
 -- Procedure to save grades for a student in a course
+-- Example code:
+-- EXEC SaveGrade 
+--     @StudentId = 1, -- Aaron Adams
+--     @CourseId = 1,  -- Math 101
+--     @StaffId = 3,   -- Math Teacher: Charlie Williams
+--     @Grade = 'A', 
+--     @GradeDate = GETDATE();
+-- GO
 CREATE PROCEDURE SaveGrade
 	@StudentId INT,
 	@CourseId INT,

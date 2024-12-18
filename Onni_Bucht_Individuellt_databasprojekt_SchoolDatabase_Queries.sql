@@ -220,8 +220,8 @@ GO
 -- EXEC AddStudent
 --     @FirstName = 'John', 
 --     @LastName = 'Doe', 
---     @PersonalNumber = 200404205623;
---     @CourseId = 1; -- This will assign to Math 101
+--     @PersonalNumber = 200404205623,
+--     @CourseId = 1; -- This will assign to Math 101. You can replace 1 with NULL if no enrolment is necessary.
 -- GO
 CREATE PROCEDURE AddStudent
 	@FirstName NVARCHAR(50),
@@ -244,13 +244,52 @@ BEGIN
 END;
 GO
 
+-- Procedure to create enrolment for a student
+-- Example code:
+-- EXEC CreateEnrolment
+--     @StudentId = 1,         -- Aaron Adams
+--     @CourseId = 1,          -- Math 101
+--     @StaffId = 3,           -- Math Teacher: Charlie Williams
+--     @Grade = 'A',           -- 'A' can be replaced with NULL if no grade is set
+--     @GradeDate = GETDATE(); -- GETDATE() can be replaced with NULL if no grade date is available
+-- GO
+CREATE PROCEDURE CreateEnrolment
+	@StudentId INT,
+	@CourseId INT,
+	@StaffId INT,
+	@Grade CHAR(1),
+	@GradeDate DATETIME
+AS
+BEGIN
+	-- Start the transaction
+	BEGIN TRANSACTION;
+
+	BEGIN TRY
+		-- Insert into the Enrolment table
+		INSERT INTO Enrolment (CourseId, StudentId, Grade, GradeDate, StaffId)
+		VALUES (@CourseId, SCOPE_IDENTITY(), NULL, NULL, NULL); -- Null grade & teacher initially
+
+		-- Commit transaction if successful
+		COMMIT TRANSACTION;
+		PRINT 'Enrolment saved successfully';
+	END TRY
+	BEGIN CATCH
+		-- Roll back the transaction in case of an error
+		ROLLBACK TRANSACTION;
+
+		-- Rethrow error for debugging
+		THROW;
+	END CATCH
+END;
+GO
+
 -- Procedure to update grade for a student in a course
 -- Example code:
--- EXEC UpdateGrade 
+-- EXEC UpdateGrade
 --     @StudentId = 1, -- Aaron Adams
 --     @CourseId = 1,  -- Math 101
 --     @StaffId = 3,   -- Math Teacher: Charlie Williams
---     @Grade = 'A', 
+--     @Grade = 'A',
 --     @GradeDate = GETDATE();
 -- GO
 CREATE PROCEDURE UpdateGrade
@@ -350,27 +389,3 @@ BEGIN
 	WHERE E.StudentId = @StudentId;
 END;
 GO
-
--- Grade a student using Transactions in case something goes wrong.
-BEGIN TRY
-	BEGIN TRANSACTION;
-
-	-- Variables for grade and other information.
-	DECLARE @EnrolmentId INT = 1;
-	DECLARE @NewGrade CHAR(1) = 'B';
-	DECLARE @GradeDate DATETIME = GETDATE();
-
-	-- Update the grade in the table.
-	UPDATE Enrolment
-	SET Grade = @NewGrade, GradeDate = @GradeDate
-	WHERE EnrolmentId = @EnrolmentId;
-
-	-- Commit transaction.
-	COMMIT TRANSACTION;
-	PRINT 'Betyget har uppdaterats framgångsrikt.';
-END TRY
-BEGIN CATCH
-	-- If something went wrong, rollback the transaction.
-	ROLLBACK TRANSACTION;
-	PRINT 'Ett fel inträffade.';
-END CATCH

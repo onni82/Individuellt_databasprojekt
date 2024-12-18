@@ -272,6 +272,25 @@ BEGIN
 END;
 GO
 
+-- Create a view to display grades with teacher details
+-- Example run code:
+-- SELECT *
+-- FROM GradesWithTeacherDetails
+-- ORDER BY GradeDate DESC;
+-- GO
+CREATE VIEW GradesWithTeacherDetails AS
+SELECT
+	CONCAT(S.FirstName, ' ', S.LastName) AS StudentName,
+	C.CourseName,
+	CONCAT(T.FirstName, ' ', T.LastName) AS TeacherName,
+	E.Grade,
+	E.GradeDate
+FROM Enrolment E
+JOIN Students S ON E.StudentId = S.StudentId
+JOIN Courses C ON E.CourseId = C.CourseId
+LEFT JOIN Staff T ON E.StaffId = T.StaffId;
+GO
+
 -- What's the sum of wages from each department/role?
 SELECT
 	R.RoleName AS Department,

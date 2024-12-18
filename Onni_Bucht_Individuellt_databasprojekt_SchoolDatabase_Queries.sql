@@ -189,7 +189,7 @@ GO
 -- We want to save students and see which class they are in.
 -- We want to be able to save grades for a student in each course they read
 -- and we want to be able to see which teacher gave the grade.
---  Grades must also have a date on which they were set.
+-- Grades must also have a date on which they were set.
 
 -- What's the sum of wages from each department/role?
 SELECT R.RoleName AS Department, SUM(R.RoleMonthlyPay) AS MonthlyPayout

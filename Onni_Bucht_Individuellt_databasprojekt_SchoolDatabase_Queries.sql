@@ -226,22 +226,22 @@ GO
 BEGIN TRY
 	BEGIN TRANSACTION;
 
-	-- Variabler för att hålla betyget och annan information
-	DECLARE @EnrolmentId INT = 1;  -- Exempel-ID för en kursregistrering
-	DECLARE @NewGrade CHAR(1) = 'B';  -- Det nya betyget
-	DECLARE @GradeDate DATETIME = GETDATE();  -- Dagens datum
+	-- Variables for grade and other information
+	DECLARE @EnrolmentId INT = 1;
+	DECLARE @NewGrade CHAR(1) = 'B';
+	DECLARE @GradeDate DATETIME = GETDATE();
 
-	-- Uppdatera betyget i tabellen
+	-- Update the grade in the table
 	UPDATE Enrolment
 	SET Grade = @NewGrade, GradeDate = @GradeDate
 	WHERE EnrolmentId = @EnrolmentId;
 
-	-- Bekräfta transaktionen
+	-- Commit transaction
 	COMMIT TRANSACTION;
 	PRINT 'Betyget har uppdaterats framgångsrikt.';
 END TRY
 BEGIN CATCH
-	-- Om något gick fel, rulla tillbaka transaktionen
+	-- If something went wrong, rollback the transaction
 	ROLLBACK TRANSACTION;
 	PRINT 'Ett fel inträffade.';
 END CATCH

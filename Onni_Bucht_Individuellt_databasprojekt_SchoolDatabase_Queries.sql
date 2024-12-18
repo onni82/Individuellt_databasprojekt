@@ -231,22 +231,10 @@ BEGIN TRY
 	DECLARE @NewGrade CHAR(1) = 'B';  -- Det nya betyget
 	DECLARE @GradeDate DATETIME = GETDATE();  -- Dagens datum
 
-	-- Kontrollera om registreringen existerar
-	IF NOT EXISTS (SELECT 1 FROM Enrolment WHERE EnrolmentId = @EnrolmentId)
-	BEGIN
-		THROW 50000, 'Ingen kursregistrering hittades med detta ID.', 1;
-	END
-
 	-- Uppdatera betyget i tabellen
 	UPDATE Enrolment
 	SET Grade = @NewGrade, GradeDate = @GradeDate
 	WHERE EnrolmentId = @EnrolmentId;
-
-	-- Kontrollera om uppdateringen påverkade någon rad
-	IF @@ROWCOUNT = 0
-	BEGIN
-		THROW 50001, 'Uppdatering misslyckades av okänd anledning.', 1;
-	END
 
 	-- Bekräfta transaktionen
 	COMMIT TRANSACTION;
@@ -255,5 +243,5 @@ END TRY
 BEGIN CATCH
 	-- Om något gick fel, rulla tillbaka transaktionen
 	ROLLBACK TRANSACTION;
-	PRINT 'Ett fel inträffade: ' + ERROR_MESSAGE();
-END CATCH;
+	PRINT 'Ett fel inträffade.';
+END CATCH

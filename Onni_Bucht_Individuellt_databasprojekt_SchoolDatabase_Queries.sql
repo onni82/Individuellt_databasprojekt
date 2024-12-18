@@ -20,8 +20,8 @@ GO
 -- Has an FK that refers to the roles table
 CREATE TABLE Staff(
 	StaffId INT PRIMARY KEY IDENTITY(1,1),
-	FirstName NVARCHAR(50),
-	LastName NVARCHAR(50),
+	FirstName NVARCHAR(50) NOT NULL,
+	LastName NVARCHAR(50) NOT NULL,
 	HireDate DATE,
 	RoleId INT NOT NULL,
 	FOREIGN KEY(RoleId) REFERENCES Roles(RoleId)
@@ -31,8 +31,8 @@ GO
 -- Creates the students table
 CREATE TABLE Students(
 	StudentId INT PRIMARY KEY IDENTITY(1,1),
-	FirstName NVARCHAR(50),
-	LastName NVARCHAR(50),
+	FirstName NVARCHAR(50) NOT NULL,
+	LastName NVARCHAR(50) NOT NULL,
 	PersonalNumber BIGINT NOT NULL
 );
 GO
@@ -188,6 +188,8 @@ FROM Staff
 JOIN Roles ON Staff.RoleId = Roles.RoleId
 ORDER BY YearsWorked DESC;
 GO
+
+
 
 -- We want to save students and see which class they are in.
 -- We want to be able to save grades for a student in each course they read

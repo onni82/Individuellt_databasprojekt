@@ -220,20 +220,31 @@ GO
 -- EXEC AddStudent
 --     @FirstName = 'John', 
 --     @LastName = 'Doe', 
---     @PersonalNumber = '200404205623';
+--     @PersonalNumber = 200404205623;
+--     @CourseId = 1;
 -- GO
 CREATE PROCEDURE AddStudent
 	@FirstName NVARCHAR(50),
 	@LastName NVARCHAR(50),
-	@PersonalNumber BIGINT
+	@PersonalNumber BIGINT,
+	@CourseId INT = NULL -- Optional: Assign to a course
 AS
 BEGIN
 	INSERT INTO Students (FirstName, LastName, PersonalNumber)
 	VALUES (@FirstName, @LastName, @PersonalNumber)
 
+	-- If a CourseId is provided, enroll the student in the course
+	IF @CourseId IS NOT NULL
+	BEGIN
+		INSERT INTO Enrolment (CourseId, StudentId, Grade, GradeDate, StaffId)
+		VALUES (@CourseId, SCOPE_IDENTITY(), NULL, NULL, NULL); -- Null grade & teacher initially
+	END;
+
 	PRINT 'New student added successfully.';
 END;
 GO
+
+
 
 -- What's the sum of wages from each department/role?
 SELECT

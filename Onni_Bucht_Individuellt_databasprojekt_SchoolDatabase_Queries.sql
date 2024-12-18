@@ -215,6 +215,18 @@ GO
 -- We want to be able to save grades for a student in each course they read
 -- and we want to be able to see which teacher gave the grade.
 -- Grades must also have a date on which they were set.
+CREATE PROCEDURE AddStudent
+	@FirstName NVARCHAR(50),
+	@LastName NVARCHAR(50),
+	@PersonalNumber BIGINT
+AS
+BEGIN
+	INSERT INTO Students (FirstName, LastName, PersonalNumber)
+	VALUES (@FirstName, @LastName, @PersonalNumber)
+
+	PRINT 'New student added successfully.';
+END;
+GO
 
 -- What's the sum of wages from each department/role?
 SELECT

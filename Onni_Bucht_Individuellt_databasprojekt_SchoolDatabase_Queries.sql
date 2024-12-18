@@ -215,6 +215,12 @@ GO
 -- We want to be able to save grades for a student in each course they read
 -- and we want to be able to see which teacher gave the grade.
 -- Grades must also have a date on which they were set.
+-- Example code:
+-- EXEC AddStudent
+--     @FirstName = 'John', 
+--     @LastName = 'Doe', 
+--     @PersonalNumber = '200404205623';
+-- GO
 CREATE PROCEDURE AddStudent
 	@FirstName NVARCHAR(50),
 	@LastName NVARCHAR(50),

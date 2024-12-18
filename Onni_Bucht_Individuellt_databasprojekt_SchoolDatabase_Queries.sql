@@ -261,14 +261,28 @@ CREATE PROCEDURE UpdateGrade
 	@GradeDate DATETIME
 AS
 BEGIN
-	-- Update the grade in the Enrolment table
-	UPDATE Enrolment
-	SET Grade = @Grade,
-		GradeDate = @GradeDate,
-		StaffId = @StaffId
-	WHERE StudentId = @StudentId AND CourseId = @CourseId;
+	-- Start the transaction
+	BEGIN TRANSACTION;
 
-	PRINT 'Grade saved successfully';
+	BEGIN TRY
+		-- Update the grade in the Enrolment table
+		UPDATE Enrolment
+		SET Grade = @Grade,
+			GradeDate = @GradeDate,
+			StaffId = @StaffId
+		WHERE StudentId = @StudentId AND CourseId = @CourseId;
+
+		-- Commit transaction if successful
+		COMMIT TRANSACTION;
+		PRINT 'Grade saved successfully';
+	END TRY
+	BEGIN CATCH
+		-- Roll back the transaction in case of an error
+		ROLLBACK TRANSACTION;
+
+		-- Rethrow error for debugging
+		THROW;
+	END CATCH
 END;
 GO
 

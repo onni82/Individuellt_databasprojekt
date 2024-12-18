@@ -22,6 +22,7 @@ CREATE TABLE Staff(
 	StaffId INT PRIMARY KEY IDENTITY(1,1),
 	FirstName NVARCHAR(50),
 	LastName NVARCHAR(50),
+	HireDate DATE,
 	RoleId INT NOT NULL,
 	FOREIGN KEY(RoleId) REFERENCES Roles(RoleId)
 );

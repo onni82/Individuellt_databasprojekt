@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Individuellt_databasprojekt.Data;
-using Individuellt_databasprojekt.Models;
 
 namespace Individuellt_databasprojekt
 {

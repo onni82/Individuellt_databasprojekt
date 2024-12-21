@@ -419,61 +419,77 @@ namespace Individuellt_databasprojekt
              * the average grade and the highest and lowest grade for each course.
              */
             DisplayAllCourses();
-            using (var context = new SchoolContext())
+            using (var connection = new SqlConnection(connectionString))
             {
+                connection.Open();
+
                 Console.WriteLine("Which class do you want to see? Type a corresponding number.");
                 string? classChoice = Console.ReadLine();
                 Console.WriteLine("");
 
-                // Tries to parse the choice and checks if any courses can be found with that ID
-                var courses = context.Courses.ToList();
-                if (int.TryParse(classChoice, out int classChoiceInt) && courses.Any(c => c.CourseId == classChoiceInt))
+                if (int.TryParse(classChoice, out int classChoiceInt))
                 {
-                    // Makes a list of all grades from a specific course
-                    var grades = context.Enrolments
-                        .Where(e => e.CourseId == classChoiceInt)
-                        .Select(e => e.Grade)
-                        .ToList();
+                    string gradesQuery = @"
+                    SELECT Grade
+                    FROM Enrolments
+                    WHERE CourseId = @CourseId";
 
-                    // Grade to numeric mapping
-                    Dictionary<string, int> gradeToPoints = new Dictionary<string, int>
+                    using (var command = new SqlCommand(gradesQuery, connection))
                     {
-                        { "A", 5 },
-                        { "B", 4 },
-                        { "C", 3 },
-                        { "D", 2 },
-                        { "E", 1 },
-                        { "F", 0 }
-                    };
+                        command.Parameters.AddWithValue("@CourseId", classChoiceInt);
+                        using (var reader = command.ExecuteReader())
+                        {
+                            var grades = new List<string>();
+                            while (reader.Read())
+                            {
+                                grades.Add(reader.GetString(0));
+                            }
 
-                    // Numeric to grade mapping
-                    Dictionary<int, string> pointsToGrade = new Dictionary<int, string>
-                    {
-                        { 5, "A" },
-                        { 4, "B" },
-                        { 3, "C" },
-                        { 2, "D" },
-                        { 1, "E" },
-                        { 0, "F" }
-                    };
+                            if (grades.Count == 0)
+                            {
+                                Console.WriteLine("No grades available for this course.");
+                            }
+                            else
+                            {
+                                // Calculate the average grade
+                                Dictionary<string, int> gradeToPoints = new Dictionary<string, int>
+                                {
+                                    { "A", 5 },
+                                    { "B", 4 },
+                                    { "C", 3 },
+                                    { "D", 2 },
+                                    { "E", 1 },
+                                    { "F", 0 }
+                                };
 
-                    // Calculate the average points
-                    double averagePoints = grades
-                        .Where(grade => gradeToPoints.ContainsKey(grade)) // Ensure valid grades
-                        .Select(grade => gradeToPoints[grade]) // Convert grades to points
-                        .Average();
+                                var numericGrades = grades.Select(grade => gradeToPoints[grade]).ToList();
 
-                    Console.WriteLine($"Average Points: {averagePoints:F2}");
+                                double averagePoints = numericGrades.Average();
+                                int highestGrade = numericGrades.Max();
+                                int lowestGrade = numericGrades.Min();
 
-                    // Convert back to a grade if needed (round to the nearest whole number)
-                    int roundedPoints = (int)Math.Round(averagePoints);
-                    string averageGrade = pointsToGrade.ContainsKey(roundedPoints) ? pointsToGrade[roundedPoints] : "?";
+                                Dictionary<int, string> pointsToGrade = new Dictionary<int, string>
+                                {
+                                    { 5, "A" },
+                                    { 4, "B" },
+                                    { 3, "C" },
+                                    { 2, "D" },
+                                    { 1, "E" },
+                                    { 0, "F" }
+                                };
 
-                    Console.WriteLine($"Average Grade: {averageGrade}");
+                                string averageGrade = pointsToGrade[(int)Math.Round(averagePoints)];
+
+                                Console.WriteLine($"Average Grade: {averageGrade}");
+                                Console.WriteLine($"Highest Grade: {pointsToGrade[highestGrade]}");
+                                Console.WriteLine($"Lowest Grade: {pointsToGrade[lowestGrade]}");
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Invalid choice");
+                    Console.WriteLine("Invalid course choice.");
                 }
             }
         }

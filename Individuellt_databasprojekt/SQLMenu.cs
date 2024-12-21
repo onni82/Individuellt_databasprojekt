@@ -499,48 +499,55 @@ namespace Individuellt_databasprojekt
              * The user gets the opportunity to enter information about
              * a new student and that data is then saved in the database.
              */
-            using (var context = new SchoolContext())
+
+            // Check first name
+            Console.WriteLine("Enter the student's first name:");
+            string firstName = Console.ReadLine();
+            while (string.IsNullOrWhiteSpace(firstName))
             {
-                // Check first name
-                Console.WriteLine("Enter the student's first name:");
-                string? firstName = Console.ReadLine();
-                // Check if the first name is null or empty
-                while (string.IsNullOrWhiteSpace(firstName))
+                Console.WriteLine("First name cannot be empty. Please enter a valid first name:");
+                firstName = Console.ReadLine();
+            }
+
+            // Check last name
+            Console.WriteLine("Enter the student's last name:");
+            string lastName = Console.ReadLine();
+            while (string.IsNullOrWhiteSpace(lastName))
+            {
+                Console.WriteLine("Last name cannot be empty. Please enter a valid last name:");
+                lastName = Console.ReadLine();
+            }
+
+            // Check personal number
+            Console.WriteLine("Enter the student's personal number (YYYYMMDDNNNN):");
+            long personalNumber = long.Parse(Console.ReadLine());
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Check if student already exists based on personal number
+                string checkStudentQuery = "SELECT COUNT(*) FROM Students WHERE PersonalNumber = @PersonalNumber";
+                using (SqlCommand cmd = new SqlCommand(checkStudentQuery, connection))
                 {
-                    Console.WriteLine("First name cannot be empty. Please enter a valid first name:");
-                    firstName = Console.ReadLine();
+                    cmd.Parameters.AddWithValue("@PersonalNumber", personalNumber);
+                    int existingStudentCount = (int)cmd.ExecuteScalar();
+                    if (existingStudentCount > 0)
+                    {
+                        Console.WriteLine("A student with that personal number already exists. Please enter a different personal number.");
+                        return;
+                    }
                 }
 
-                // Check last name
-                Console.WriteLine("Enter the student's last name:");
-                string? lastName = Console.ReadLine();
-                // Check if the last name is null or empty
-                while (string.IsNullOrWhiteSpace(lastName))
+                // Insert new student
+                string insertStudentQuery = "INSERT INTO Students (FirstName, LastName, PersonalNumber) VALUES (@FirstName, @LastName, @PersonalNumber)";
+                using (SqlCommand cmd = new SqlCommand(insertStudentQuery, connection))
                 {
-                    Console.WriteLine("Last name cannot be empty. Please enter a valid last name:");
-                    lastName = Console.ReadLine();
+                    cmd.Parameters.AddWithValue("@FirstName", firstName);
+                    cmd.Parameters.AddWithValue("@LastName", lastName);
+                    cmd.Parameters.AddWithValue("@PersonalNumber", personalNumber);
+                    cmd.ExecuteNonQuery();
                 }
-
-                // Check personal number
-                Console.WriteLine("Enter the student's personal number (YYYYMMDDNNNN):");
-                long? personalNumber = long.Parse(Console.ReadLine());
-                while (context.Students.Any(s => s.PersonalNumber == personalNumber))
-                {
-                    Console.WriteLine("A student with that personal number already exists. Please enter a different personal number (YYYYMMDDNNNN):");
-                    personalNumber = long.Parse(Console.ReadLine());
-                }
-
-                // Creates a new student object
-                var newStudent = new Student
-                {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    PersonalNumber = (long)personalNumber
-                };
-
-                // Adds the new student to the database
-                context.Students.Add(newStudent);
-                context.SaveChanges();
 
                 Console.WriteLine("Student added successfully.");
             }

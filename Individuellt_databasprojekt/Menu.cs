@@ -20,11 +20,12 @@ namespace Individuellt_databasprojekt
                 Console.WriteLine("1. Display staff");
                 Console.WriteLine("2. Display all students");
                 Console.WriteLine("3. Display all students in a course");
-                Console.WriteLine("4. Display all grades set the last month");
-                Console.WriteLine("5. Display all grades for a course");
-                Console.WriteLine("6. Add a new student");
-                Console.WriteLine("7. Add new staff");
-                Console.WriteLine("8. Exit application");
+				Console.WriteLine("4. Display all courses");
+				Console.WriteLine("5. Display all grades set the last month");
+                Console.WriteLine("6. Display all grades for a course");
+                Console.WriteLine("7. Add a new student");
+                Console.WriteLine("8. Add new staff");
+                Console.WriteLine("9. Exit application");
 
                 string? choice = Console.ReadLine();
 
@@ -46,27 +47,32 @@ namespace Individuellt_databasprojekt
                         DisplayStudentsInCourse();
                         Console.WriteLine("");
                         break;
-                    case "4":
+					case "4":
+						Console.WriteLine("");
+						DisplayCourses();
+						Console.WriteLine("");
+						break;
+					case "5":
                         Console.WriteLine("");
                         DisplayGradesFromLastMonth();
                         Console.WriteLine("");
                         break;
-                    case "5":
+                    case "6":
                         Console.WriteLine("");
                         DisplayGradesFromCourse();
                         Console.WriteLine("");
                         break;
-                    case "6":
+                    case "7":
                         Console.WriteLine("");
                         AddStudent();
                         Console.WriteLine("");
                         break;
-                    case "7":
+                    case "8":
                         Console.WriteLine("");
                         AddStaff();
                         Console.WriteLine("");
                         break;
-                    case "8":
+                    case "9":
                         // Exits the application
                         return;
                     default:

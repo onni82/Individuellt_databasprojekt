@@ -87,16 +87,27 @@ namespace Individuellt_databasprojekt
 
         public static void DisplayStaffRoles()
         {
-            using (var context = new SchoolContext())
+            using (var connection = new SqlConnection(connectionString))
             {
-                // Prints a list of all Roless in the database
-                var roles = context.Roles.ToList();
+                connection.Open();
 
-                Console.WriteLine("All roles:");
-                foreach (var role in roles)
+                // SQL query to get all roles from the database
+                string query = "SELECT RoleId, RoleName FROM Roles";
+
+                using (var command = new SqlCommand(query, connection))
+                using (var reader = command.ExecuteReader())
                 {
-                    Console.WriteLine(role.RoleId + ". " + role.RoleName);
+                    Console.WriteLine("All roles:");
+
+                    // Read the roles from the SQL query result from the database
+                    while (reader.Read())
+                    {
+                        int roleId = reader.GetInt32(0);
+                        string roleName = reader.GetString(1);
+                        Console.WriteLine($"{roleId}. {roleName}");
+                    }
                 }
+                
             }
         }
 

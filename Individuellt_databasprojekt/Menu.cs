@@ -49,7 +49,7 @@ namespace Individuellt_databasprojekt
                         break;
 					case "4":
 						Console.WriteLine("");
-						DisplayCourses();
+						DisplayAllCourses();
 						Console.WriteLine("");
 						break;
 					case "5":

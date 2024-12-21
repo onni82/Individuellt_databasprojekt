@@ -295,7 +295,7 @@ namespace Individuellt_databasprojekt
                     {
                         int courseId = reader.GetInt32(0);
                         string courseName = reader.GetString(1);
-						Console.WriteLine($"{courseId}. {courseName}");
+                        Console.WriteLine($"{courseId}. {courseName}");
                     }
                 }
             }
@@ -313,7 +313,7 @@ namespace Individuellt_databasprojekt
             {
                 connection.Open();
 
-				Console.WriteLine("Which class do you want to see? Type a corresponding number.");
+                Console.WriteLine("Which class do you want to see? Type a corresponding number.");
                 string? classChoice = Console.ReadLine();
                 Console.WriteLine("");
 
@@ -353,16 +353,16 @@ namespace Individuellt_databasprojekt
                             }
                             else
                             {
-								Console.WriteLine("Invalid course choice.");
+                                Console.WriteLine("Invalid course choice.");
                             }
                         }
                     }
                 }
                 else
                 {
-					Console.WriteLine("Invalid input.");
+                    Console.WriteLine("Invalid input.");
                 }
-			}
+            }
         }
 
         public static void DisplayGradesFromLastMonth()
@@ -371,29 +371,40 @@ namespace Individuellt_databasprojekt
              * The user immediately gets a list of all the grades set in the last month,
              * where the student's name, the name of the course and the grade appear.
              */
-            using (var context = new SchoolContext())
+            using (var connection = new SqlConnection(connectionString))
             {
                 // Gets the current date and subtracts 30 days
                 DateTime lastMonth = DateTime.Now.AddDays(-30);
+                connection.Open();
 
-                // Selects all the enrolments where the enrolment date is after the last month
-                var grades = context.Enrolments
-                    .Include(e => e.Student)   // Include related Student
-                    .Include(e => e.Course)    // Include related Course
-                    .Include(e => e.Staff)     // Include related Staff
-                    .Where(e => e.GradeDate > lastMonth)
-                    .ToList();
+                string query = @"
+                SELECT s.FirstName, s.LastName, c.CourseName, e.Grade, e.GradeDate
+                FROM Enrolments e
+                JOIN Students s ON e.StudentId = s.StudentId
+                JOIN Courses c ON e.CourseId = c.CourseId
+                WHERE e.GradeDate > @LastMonth";
 
-                if (grades.Count == 0 || grades == null)
+                using (var command = new SqlCommand(query, connection))
                 {
-                    Console.WriteLine("No grades set in the last month.");
-                }
-                else
-                {
-                    // Prints all the grades
-                    foreach (var grade in grades)
+                    command.Parameters.AddWithValue("@LastMonth", lastMonth);
+                    using (var reader = command.ExecuteReader())
                     {
-                        Console.WriteLine($"{grade.Student.FirstName} {grade.Student.LastName} - {grade.Course.CourseName}: {grade.Grade}. Graded on {grade.GradeDate:D}");
+                        if (!reader.HasRows)
+                        {
+                            Console.WriteLine("No grades set in the lst month.");
+                        }
+                        else
+                        {
+                            while (reader.Read())
+                            {
+                                string firstName = reader.GetString(0);
+                                string lastName = reader.GetString(1);
+                                string courseName = reader.GetString(2);
+                                string grade = reader.GetString(3);
+                                DateTime gradeDate = reader.GetDateTime(4);
+                                Console.WriteLine($"{firstName} {lastName} - {courseName}: {grade}. Graded on {gradeDate:D}");
+                            }
+                        }
                     }
                 }
             }

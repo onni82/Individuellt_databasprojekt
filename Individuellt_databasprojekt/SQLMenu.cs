@@ -295,7 +295,7 @@ namespace Individuellt_databasprojekt
                     {
                         int courseId = reader.GetInt32(0);
                         string courseName = reader.GetString(1);
-						Console.WriteLine($"{courseId}. {courseName}}");
+						Console.WriteLine($"{courseId}. {courseName}");
                     }
                 }
             }
@@ -309,36 +309,60 @@ namespace Individuellt_databasprojekt
              * all the students in that class will be printed.
              */
             DisplayAllCourses();
-            using (var context = new SchoolContext())
+            using (var connection = new SqlConnection(connectionString))
             {
-                Console.WriteLine("Which class do you want to see? Type a corresponding number.");
+                connection.Open();
+
+				Console.WriteLine("Which class do you want to see? Type a corresponding number.");
                 string? classChoice = Console.ReadLine();
                 Console.WriteLine("");
 
-                // Tries to parse the choice and checks if any courses can be found with that ID
-                var courses = context.Courses.ToList();
-                if (int.TryParse(classChoice, out int classChoiceInt) && courses.Any(c => c.CourseId == classChoiceInt))
+                string query = "SELECT CourseId, CourseName FROM Courses WHERE CourseId = @CourseId";
+
+                if (int.TryParse(classChoice, out int classChoiceInt))
                 {
-                    // Selects all the students where their enrolment course ID equals to user choice
-                    var studentsInCourse = context.Enrolments
-                        .Where(e => e.CourseId == classChoiceInt)
-                        .Select(e => e.Student)
-                        .ToList();
-
-                    string courseName = courses.First(c => c.CourseId == classChoiceInt).CourseName;
-                    Console.WriteLine($"Students in {courseName}:");
-
-                    // Prints all the students
-                    foreach (var student in studentsInCourse)
+                    using (var command = new SqlCommand(query, connection))
                     {
-                        Console.WriteLine($"{student.FirstName} {student.LastName}");
+                        command.Parameters.AddWithValue("@CourseId", classChoiceInt);
+                        using (var reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string courseName = reader.GetString(1);
+
+                                string studentsQuery = @"
+                                SELECT s.FirstName, s.LastName
+                                FROM Students s
+                                JOIN Enrolments e ON s.StudentId = e.StudentId
+                                WHERE e.CourseId = @CourseId";
+
+                                using (var studentCommand = new SqlCommand(studentsQuery, connection))
+                                {
+                                    studentCommand.Parameters.AddWithValue("@CourseId", classChoiceInt);
+                                    using (var studentReader = studentCommand.ExecuteReader())
+                                    {
+                                        Console.WriteLine($"Students in {courseName}");
+                                        while (studentReader.Read())
+                                        {
+                                            string firstName = studentReader.GetString(0);
+                                            string lastName = studentReader.GetString(1);
+                                            Console.WriteLine($"{firstName} {lastName}");
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+								Console.WriteLine("Invalid course choice.");
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Invalid choice");
+					Console.WriteLine("Invalid input.");
                 }
-            }
+			}
         }
 
         public static void DisplayGradesFromLastMonth()

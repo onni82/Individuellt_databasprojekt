@@ -618,5 +618,21 @@ namespace Individuellt_databasprojekt
                 Console.WriteLine("Staff added successfully.");
             }
         }
-    }
+
+		// Helper method to check if role exists in the database
+		public static bool RoleExists(int roleId, string connectionString)
+		{
+			using (SqlConnection connection = new SqlConnection(connectionString))
+			{
+				connection.Open();
+				string roleCheckQuery = "SELECT COUNT(*) FROM Roles WHERE RoleId = @RoleId";
+				using (SqlCommand cmd = new SqlCommand(roleCheckQuery, connection))
+				{
+					cmd.Parameters.AddWithValue("@RoleId", roleId);
+					int roleCount = (int)cmd.ExecuteScalar();
+					return roleCount > 0;
+				}
+			}
+		}
+	}
 }

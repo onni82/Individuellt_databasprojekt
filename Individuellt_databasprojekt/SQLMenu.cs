@@ -107,7 +107,6 @@ namespace Individuellt_databasprojekt
                         Console.WriteLine($"{roleId}. {roleName}");
                     }
                 }
-                
             }
         }
 

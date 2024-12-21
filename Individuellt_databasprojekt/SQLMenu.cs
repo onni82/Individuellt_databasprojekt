@@ -578,6 +578,17 @@ namespace Individuellt_databasprojekt
 				lastName = Console.ReadLine();
 			}
 
+			// Display and get role choice
+			DisplayStaffRoles();
+			Console.WriteLine("What role does this new staff have? Type a corresponding number.");
+			string roleChoice = Console.ReadLine();
+			int roleChoiceInt;
+			while (!int.TryParse(roleChoice, out roleChoiceInt) || !RoleExists(roleChoiceInt, connectionString))
+			{
+				Console.WriteLine("Invalid choice. Please enter a valid role number.");
+				roleChoice = Console.ReadLine();
+			}
+
 
 		}
 

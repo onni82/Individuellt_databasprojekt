@@ -19,7 +19,7 @@ namespace Individuellt_databasprojekt
                 Console.WriteLine("Want do you want to do?");
                 Console.WriteLine("1. Display staff");
                 Console.WriteLine("2. Display all students");
-                Console.WriteLine("3. Display all students in a class");
+                Console.WriteLine("3. Display all students in a course");
                 Console.WriteLine("4. Display all grades set the last month");
                 Console.WriteLine("5. Display all grades for a course");
                 Console.WriteLine("6. Add a new student");

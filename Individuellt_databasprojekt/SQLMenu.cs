@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Individuellt_databasprojekt.Data;
 using Individuellt_databasprojekt.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Individuellt_databasprojekt
 {

@@ -215,90 +215,74 @@ namespace Individuellt_databasprojekt
 			}
 		}
 
-        public static void DisplayStudents()
-        {
-            /* Display all students.
-             * The user can choose whether they want to see the students
-             * sorted by first or last name and whether it should be
-             * sorted in ascending or descending order.
-             */
-            using (var context = new SchoolContext())
-            {
-                Console.WriteLine("Do you want to sort the students by first or last name?");
-                Console.WriteLine("1. First name");
-                Console.WriteLine("2. Last name");
-                string? sortChoice = Console.ReadLine();
-                Console.WriteLine("");
-                switch (sortChoice)
-                {
-                    // Sort students by first name
-                    case "1":
-                        Console.WriteLine("Do you want to sort the students in ascending or descending order?");
-                        Console.WriteLine("1. Ascending");
-                        Console.WriteLine("2. Descending");
-                        string? firstNameOrderChoice = Console.ReadLine();
-                        Console.WriteLine("");
-                        switch (firstNameOrderChoice)
-                        {
-                            // Sort students by first name, ascending
-                            case "1":
-                                var students = context.Students.OrderBy(s => s.FirstName).ToList();
-                                foreach (var student in students)
-                                {
-                                    Console.WriteLine(student.FirstName + " " + student.LastName);
-                                }
-                                break;
-                            // Sort students by first name, descending
-                            case "2":
-                                var students2 = context.Students.OrderByDescending(s => s.FirstName).ToList();
-                                foreach (var student in students2)
-                                {
-                                    Console.WriteLine(student.FirstName + " " + student.LastName);
-                                }
-                                break;
-                            default:
-                                Console.WriteLine("Invalid choice");
-                                break;
-                        }
-                        break;
-                    // Sort students by last name
-                    case "2":
-                        Console.WriteLine("Do you want to sort the students in ascending or descending order?");
-                        Console.WriteLine("1. Ascending");
-                        Console.WriteLine("2. Descending");
-                        string? orderChoice = Console.ReadLine();
-                        Console.WriteLine("");
-                        switch (orderChoice)
-                        {
-                            // Sort students by last name, ascending
-                            case "1":
-                                var students = context.Students.OrderBy(s => s.LastName).ToList();
-                                foreach (var student in students)
-                                {
-                                    Console.WriteLine(student.FirstName + " " + student.LastName);
-                                }
-                                break;
-                            // Sort students by last name, descending
-                            case "2":
-                                var students2 = context.Students.OrderByDescending(s => s.LastName).ToList();
-                                foreach (var student in students2)
-                                {
-                                    Console.WriteLine(student.FirstName + " " + student.LastName);
-                                }
-                                break;
-                            default:
-                                Console.WriteLine("Invalid choice");
-                                break;
-                        }
-                        break;
-                    default:
-                        Console.WriteLine("Invalid choice");
-                        break;
-                }
-            }
-        }
+		public static void DisplayStudents()
+		{
+			string connectionString = "your_connection_string_here";
 
-        public static void DisplayAllCourses()
+			using (var connection = new SqlConnection(connectionString))
+			{
+				connection.Open();
+
+				Console.WriteLine("Do you want to sort the students by first or last name?");
+				Console.WriteLine("1. First name");
+				Console.WriteLine("2. Last name");
+				string? sortChoice = Console.ReadLine();
+				Console.WriteLine("");
+
+				string orderBy = "";
+				string order = "";
+
+				switch (sortChoice)
+				{
+					case "1":
+						orderBy = "FirstName";
+						break;
+					case "2":
+						orderBy = "LastName";
+						break;
+					default:
+						Console.WriteLine("Invalid choice");
+						return;
+				}
+
+				Console.WriteLine("Do you want to sort the students in ascending or descending order?");
+				Console.WriteLine("1. Ascending");
+				Console.WriteLine("2. Descending");
+				string? orderChoice = Console.ReadLine();
+				Console.WriteLine("");
+
+				switch (orderChoice)
+				{
+					case "1":
+						order = "ASC";
+						break;
+					case "2":
+						order = "DESC";
+						break;
+					default:
+						Console.WriteLine("Invalid choice");
+						return;
+				}
+
+				string query = $@"
+                SELECT FirstName, LastName
+                FROM Students
+                ORDER BY {orderBy} {order}";
+
+				using (var command = new SqlCommand(query, connection))
+				using (var reader = command.ExecuteReader())
+				{
+					while (reader.Read())
+					{
+						string firstName = reader.GetString(0);
+						string lastName = reader.GetString(1);
+						Console.WriteLine($"{firstName} {lastName}");
+					}
+				}
+			}
+		}
+
+		public static void DisplayAllCourses()
         {
             using (var context = new SchoolContext())
             {

@@ -282,13 +282,21 @@ namespace Individuellt_databasprojekt
 
         public static void DisplayAllCourses()
         {
-            using (var context = new SchoolContext())
+            using (var connection = new SqlConnection(connectionString))
             {
-                // Prints a list of all courses
-                var courses = context.Courses.ToList();
-                foreach (var c in courses)
+                connection.Open();
+
+                string query = "SELECT CourseId, CourseName FROM Course";
+
+                using (var command = new SqlCommand(query, connection))
+                using (var reader = command.ExecuteReader())
                 {
-                    Console.WriteLine(c.CourseId + ". " + c.CourseName);
+                    while (reader.Read())
+                    {
+                        int courseId = reader.GetInt32(0);
+                        string courseName = reader.GetString(1);
+						Console.WriteLine($"{courseId}. {courseName}}");
+                    }
                 }
             }
         }

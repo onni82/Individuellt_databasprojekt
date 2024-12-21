@@ -1,49 +1,50 @@
-﻿# Individuellt databasprojekt
-## Om uppgiften
+﻿# Individual database project
+## About the assignment
 
-Detta är den sista praktiska uppgiften i kursen. Det är en ganska fri uppgift där du ska bevisa att du kan bygga upp mer komplexa system med databaser. Uppgiften bygger vidare på labb 2 och 3.
+This is the last practical assignment in the course. It is a fairly free assignment where you must prove that you can build more complex systems with databases. The assignment builds on labs 2 and 3.
 
-## Grundläggande kriterier
+## Basic criteria
 
-### För `G` måste följande uppfyllas:
+### For `G` the following must be met:
 
-- Anropa databasen med både SQL och en ORM
-- Konstruera väl fungerande SQL-kod
-- Skapa en tydlig, användbar och stabil databasmodell
+- Call the database with both SQL and an ORM
 
-### För `VG` måste du även:
+- Construct well-functioning SQL code
 
-- Skriva en reflektion där du nyanserat/kritiskt resonerar kring och motiverar den databasmodell du har tagit fram. Du måste även nyanserat resonera kring prestanda och lämplighet i den SQL-kod du har producerat.
-    
-    Denna reflektion skickar du in som en PDF eller textfil tillsammans med din inlämning, filnamn kan vara: Resonemang.pdf
-    
+- Create a clear, usable and stable database model
 
-## Projekt
+### For `VG` you must also:
 
-I detta projekt ska du bygga klart en helt fungerande applikation för den fiktiva skola du jobbat med i de senaste labbarna. Du ska alltså skapa en Consol-applikation som skolan kan använda och som har den funktionalitet som efterfrågas nedan.
+- Write a reflection in which you reason in a nuanced/critical way about and justify the database model you have developed. You must also reason in a nuanced way about the performance and suitability of the SQL code you have produced.
 
-### Funktioner i programmet:
+You submit this reflection as a PDF or text file together with your submission, the file name can be: Reasoning.pdf
 
-Här följer de funktioner du ska bygga i ditt program. 
+## Project
 
-- ➡️ Det måste finnas en meny där man kan välja att visa olika data som efterfrågas av skolan. (Console)
-- ➡️ Skolan vill kunna ta fram en översikt över all personal där det framgår namn och vilka befattningar de har samt hur många år de har arbetat på skolan. Administratören vill också ha möjlighet att spara ner ny personal. (SQL i SSMS)
-- ➡️ Vi vill spara ner elever och se vilken klass de går i. Vi vill kunna spara ner betyg för en elev i varje kurs de läst och vi vill kunna se vilken lärare som satt betyget. Betyg ska också ha ett datum då de satts. (SQL i SSMS)
-- ➡️ Hur många lärare jobbar på de olika avdelningarna? (EF i VS)
-- ➡️ Visa information om alla elever (EF i VS)
-- ➡️ Visa en lista på alla (aktiva) kurser (EF i VS)
-- ➡️ Hur mycket betalar respektive avdelning ut i lön varje månad? (SQL i SSMS)
-- ➡️ Hur mycket är medellönen för de olika avdelningarna? (SQL i SSMS)
-- ➡️ Skapa en Stored Procedure som tar emot ett Id och returnerar viktig information om den elev som är registrerad med aktuellt id. (SQL i SSMS)
-- ➡️ Sätt betyg på en elev genom att använda Transactions ifall något går fel. (SQL i SSMS)
+In this project, you will build a fully functional application for the fictional school you worked with in the latest labs. You will therefore create a console application that the school can use and that has the functionality requested below.
 
-⚙ Extra utmaningar
-1. Visa information om en elev, vilken klass hen tillhör och vilken/vilka lärare hen har samt vilka betyg hen har fått i en specifik kurs. (SQL)
-2. Skapa en View som visar alla lärare och vilka utbildningar de ansvarar för. (SQL i SSMS)
-3. Uppdatera/korrigera en elevs information via kod. (EF i VS)
+### Functions in the program:
 
-# Din inlämning
+Here are the functions you will build in your program.
 
-- Skicka in uppgiften I Canvas
-- Skicka in en textfil som innehåller länken till ett Github-repo med din kod + en SQL-fil med din databas
-- Om du satsar på VG även en PDF eller textfil med din reflektion enligt ovan.
+- ➡️ There must be a menu where you can choose to display different data requested by the school. (Console)
+- ➡️ The school wants to be able to produce an overview of all staff, showing their names and positions as well as how many years they have worked at the school. The administrator also wants to be able to save new staff. (SQL in SSMS)
+- ➡️ We want to save students and see which class they are in. We want to be able to save grades for a student in each course they have taken and we want to be able to see which teacher set the grade. Grades should also have a date when they were set. (SQL in SSMS)
+- ➡️ How many teachers work in the different departments? (EF in VS)
+- ➡️ Show information about all students (EF in VS)
+- ➡️ Show a list of all (active) courses (EF in VS)
+- ➡️ How much does each department pay out in salary each month? (SQL in SSMS)
+- ➡️ What is the average salary for the different departments? (SQL in SSMS)
+- ➡️ Create a Stored Procedure that receives an Id and returns important information about the student who is registered with the current id. (SQL in SSMS)
+- ➡️ Grade a student by using Transactions in case something goes wrong. (SQL in SSMS)
+
+⚙ Extra challenges
+1. Show information about a student, which class they belong to and which teacher(s) they have and what grades they have received in a specific course. (SQL)
+2. Create a View that shows all teachers and which courses they are responsible for. (SQL in SSMS)
+3. Update/correct a student's information via code. (EF in VS)
+
+# Your submission
+
+- Submit the assignment in Canvas
+- Submit a text file containing the link to a Github repo with your code + an SQL file with your database
+- If you are going for VG also a PDF or text file with your reflection as above.

@@ -569,6 +569,15 @@ namespace Individuellt_databasprojekt
 				firstName = Console.ReadLine();
 			}
 
+			// Check last name
+			Console.WriteLine("Enter the staff's last name:");
+			string lastName = Console.ReadLine();
+			while (string.IsNullOrWhiteSpace(lastName))
+			{
+				Console.WriteLine("Last name cannot be empty. Please enter a valid last name:");
+				lastName = Console.ReadLine();
+			}
+
 
 		}
 

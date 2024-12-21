@@ -12,7 +12,7 @@ namespace Individuellt_databasprojekt
 {
     public class SQLMenu
     {
-        string connectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=School;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        public static string connectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=School;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
         public static void Run()
         {
             // A simple navigation in the program that allows the user to choose between the following functions.
@@ -103,50 +103,107 @@ namespace Individuellt_databasprojekt
         public static void DisplayStaff()
         {
             DisplayStaffRoles();
-            // Display staff
-            // The user can choose whether he wants to see all employees, or only within one of the categories, such as teachers
-            
-            using (var context = new SchoolContext())
-            {
-                Console.WriteLine("Which role do you want to see? Type a corresponding number, or 0 to view all staff.");
-                string? roleChoice = Console.ReadLine();
+			// Display staff
+			// The user can choose whether he wants to see all employees, or only within one of the categories, such as teachers
+			using (var connection = new SqlConnection(connectionString))
+			{
+				connection.Open();
 
-                // Views all staff
-                if (roleChoice == "0")
-                {
-                    //Groups staff by role names
-                    IEnumerable<IGrouping<string?, Staff>> staffByRole = context.Staff.GroupBy(s => s.Role.RoleName);
-                    foreach (var group in staffByRole)
-                    {
-                        Console.WriteLine("");
-                        Console.WriteLine($"{group.Count()} staff as {group.Key}:");
-                        foreach (var s in group)
-                        {
-                            Console.WriteLine($"{s.FirstName} {s.LastName}");
-                        }
-                    }
-                }
+				Console.WriteLine("Which role do you want to see? Type a corresponding number, or 0 to view all staff.");
+				string? roleChoice = Console.ReadLine();
 
-                // Checks the user's choice is an existing role
-                // First it tries to parse the choice before checking
-                else if (int.TryParse(roleChoice, out int roleChoiceInt) && context.Roles.ToList().Any(r => r.RoleId == roleChoiceInt))
-                {
-                    var staff = context.Staff.Where(s => s.RoleId == int.Parse(roleChoice)).ToList();
-                    // get staff Role.RoleName from first in staff
-                    string? staffRoleName = staff.First().Role.RoleName;
-                    Console.WriteLine($"{staff.Count()} staff as {staffRoleName}");
+				if (roleChoice == "0")
+				{
+					// Query to get all staff and group by role name
+					string query = @"
+                    SELECT r.RoleName, s.FirstName, s.LastName
+                    FROM Staff s
+                    JOIN Roles r ON s.RoleId = r.RoleId
+                    ORDER BY r.RoleName, s.LastName, s.FirstName";
 
-                    foreach (var s in staff)
-                    {
-                        Console.WriteLine($"{s.FirstName} {s.LastName}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid choice");
-                }
-            }
-        }
+					using (var command = new SqlCommand(query, connection))
+					using (var reader = command.ExecuteReader())
+					{
+						var staffByRole = new Dictionary<string, List<string>>();
+
+						while (reader.Read())
+						{
+							string roleName = reader.GetString(0);
+							string fullName = reader.GetString(1) + " " + reader.GetString(2);
+
+							if (!staffByRole.ContainsKey(roleName))
+							{
+								staffByRole[roleName] = new List<string>();
+							}
+							staffByRole[roleName].Add(fullName);
+						}
+
+						foreach (var group in staffByRole)
+						{
+							Console.WriteLine($"{group.Value.Count} staff as {group.Key}:");
+							foreach (var name in group.Value)
+							{
+								Console.WriteLine(name);
+							}
+						}
+					}
+				}
+				else if (int.TryParse(roleChoice, out int roleChoiceInt))
+				{
+					// Query to check if the roleId exists
+					string checkRoleQuery = "SELECT COUNT(*) FROM Roles WHERE RoleId = @RoleId";
+					using (var command = new SqlCommand(checkRoleQuery, connection))
+					{
+						command.Parameters.AddWithValue("@RoleId", roleChoiceInt);
+						int roleCount = (int)command.ExecuteScalar();
+
+						if (roleCount > 0)
+						{
+							// Query to get staff for the selected role
+							string staffQuery = @"
+                            SELECT s.FirstName, s.LastName, r.RoleName
+                            FROM Staff s
+                            JOIN Roles r ON s.RoleId = r.RoleId
+                            WHERE s.RoleId = @RoleId";
+
+							using (var staffCommand = new SqlCommand(staffQuery, connection))
+							{
+								staffCommand.Parameters.AddWithValue("@RoleId", roleChoiceInt);
+								using (var reader = staffCommand.ExecuteReader())
+								{
+									var staff = new List<string>();
+									string staffRoleName = null;
+
+									while (reader.Read())
+									{
+										if (staffRoleName == null)
+										{
+											staffRoleName = reader.GetString(2); // Get RoleName from first record
+										}
+
+										staff.Add(reader.GetString(0) + " " + reader.GetString(1));
+									}
+
+									Console.WriteLine($"{staff.Count} staff as {staffRoleName}");
+									foreach (var name in staff)
+									{
+										Console.WriteLine(name);
+									}
+								}
+							}
+						}
+						else
+						{
+							Console.WriteLine("Invalid choice");
+						}
+					}
+				}
+				else
+				{
+					Console.WriteLine("Invalid choice");
+				}
+			}
+		}
 
         public static void DisplayStudents()
         {

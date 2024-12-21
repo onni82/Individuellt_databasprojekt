@@ -589,7 +589,22 @@ namespace Individuellt_databasprojekt
 				roleChoice = Console.ReadLine();
 			}
 
+			using (SqlConnection connection = new SqlConnection(connectionString))
+			{
+				connection.Open();
 
+				// Insert new staff member
+				string insertStaffQuery = "INSERT INTO Staff (FirstName, LastName, RoleId) VALUES (@FirstName, @LastName, @RoleId)";
+				using (SqlCommand cmd = new SqlCommand(insertStaffQuery, connection))
+				{
+					cmd.Parameters.AddWithValue("@FirstName", firstName);
+					cmd.Parameters.AddWithValue("@LastName", lastName);
+					cmd.Parameters.AddWithValue("@RoleId", roleChoiceInt);
+					cmd.ExecuteNonQuery();
+				}
+
+				Console.WriteLine("Staff added successfully.");
+			}
 		}
 
 		// Helper method to check if role exists in the database

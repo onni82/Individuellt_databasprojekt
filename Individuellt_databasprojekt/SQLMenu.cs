@@ -113,176 +113,174 @@ namespace Individuellt_databasprojekt
         public static void DisplayStaff()
         {
             DisplayStaffRoles();
-			// Display staff
-			// The user can choose whether he wants to see all employees, or only within one of the categories, such as teachers
-			using (var connection = new SqlConnection(connectionString))
-			{
-				connection.Open();
+            // Display staff
+            // The user can choose whether he wants to see all employees, or only within one of the categories, such as teachers
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
 
-				Console.WriteLine("Which role do you want to see? Type a corresponding number, or 0 to view all staff.");
-				string? roleChoice = Console.ReadLine();
+                Console.WriteLine("Which role do you want to see? Type a corresponding number, or 0 to view all staff.");
+                string? roleChoice = Console.ReadLine();
 
-				if (roleChoice == "0")
-				{
-					// Query to get all staff and group by role name
-					string query = @"
+                if (roleChoice == "0")
+                {
+                    // Query to get all staff and group by role name
+                    string query = @"
                     SELECT r.RoleName, s.FirstName, s.LastName
                     FROM Staff s
                     JOIN Roles r ON s.RoleId = r.RoleId
                     ORDER BY r.RoleName, s.LastName, s.FirstName";
 
-					using (var command = new SqlCommand(query, connection))
-					using (var reader = command.ExecuteReader())
-					{
-						var staffByRole = new Dictionary<string, List<string>>();
+                    using (var command = new SqlCommand(query, connection))
+                    using (var reader = command.ExecuteReader())
+                    {
+                        var staffByRole = new Dictionary<string, List<string>>();
 
-						while (reader.Read())
-						{
-							string roleName = reader.GetString(0);
-							string fullName = reader.GetString(1) + " " + reader.GetString(2);
+                        while (reader.Read())
+                        {
+                            string roleName = reader.GetString(0);
+                            string fullName = reader.GetString(1) + " " + reader.GetString(2);
 
-							if (!staffByRole.ContainsKey(roleName))
-							{
-								staffByRole[roleName] = new List<string>();
-							}
-							staffByRole[roleName].Add(fullName);
-						}
+                            if (!staffByRole.ContainsKey(roleName))
+                            {
+                                staffByRole[roleName] = new List<string>();
+                            }
+                            staffByRole[roleName].Add(fullName);
+                        }
 
-						foreach (var group in staffByRole)
-						{
-							Console.WriteLine($"{group.Value.Count} staff as {group.Key}:");
-							foreach (var name in group.Value)
-							{
-								Console.WriteLine(name);
-							}
-						}
-					}
-				}
-				else if (int.TryParse(roleChoice, out int roleChoiceInt))
-				{
-					// Query to check if the roleId exists
-					string checkRoleQuery = "SELECT COUNT(*) FROM Roles WHERE RoleId = @RoleId";
-					using (var command = new SqlCommand(checkRoleQuery, connection))
-					{
-						command.Parameters.AddWithValue("@RoleId", roleChoiceInt);
-						int roleCount = (int)command.ExecuteScalar();
+                        foreach (var group in staffByRole)
+                        {
+                            Console.WriteLine($"{group.Value.Count} staff as {group.Key}:");
+                            foreach (var name in group.Value)
+                            {
+                                Console.WriteLine(name);
+                            }
+                        }
+                    }
+                }
+                else if (int.TryParse(roleChoice, out int roleChoiceInt))
+                {
+                    // Query to check if the roleId exists
+                    string checkRoleQuery = "SELECT COUNT(*) FROM Roles WHERE RoleId = @RoleId";
+                    using (var command = new SqlCommand(checkRoleQuery, connection))
+                    {
+                        command.Parameters.AddWithValue("@RoleId", roleChoiceInt);
+                        int roleCount = (int)command.ExecuteScalar();
 
-						if (roleCount > 0)
-						{
-							// Query to get staff for the selected role
-							string staffQuery = @"
+                        if (roleCount > 0)
+                        {
+                            // Query to get staff for the selected role
+                            string staffQuery = @"
                             SELECT s.FirstName, s.LastName, r.RoleName
                             FROM Staff s
                             JOIN Roles r ON s.RoleId = r.RoleId
                             WHERE s.RoleId = @RoleId";
 
-							using (var staffCommand = new SqlCommand(staffQuery, connection))
-							{
-								staffCommand.Parameters.AddWithValue("@RoleId", roleChoiceInt);
-								using (var reader = staffCommand.ExecuteReader())
-								{
-									var staff = new List<string>();
-									string staffRoleName = null;
+                            using (var staffCommand = new SqlCommand(staffQuery, connection))
+                            {
+                                staffCommand.Parameters.AddWithValue("@RoleId", roleChoiceInt);
+                                using (var reader = staffCommand.ExecuteReader())
+                                {
+                                    var staff = new List<string>();
+                                    string staffRoleName = null;
 
-									while (reader.Read())
-									{
-										if (staffRoleName == null)
-										{
-											staffRoleName = reader.GetString(2); // Get RoleName from first record
-										}
+                                    while (reader.Read())
+                                    {
+                                        if (staffRoleName == null)
+                                        {
+                                            staffRoleName = reader.GetString(2); // Get RoleName from first record
+                                        }
 
-										staff.Add(reader.GetString(0) + " " + reader.GetString(1));
-									}
+                                        staff.Add(reader.GetString(0) + " " + reader.GetString(1));
+                                    }
 
-									Console.WriteLine($"{staff.Count} staff as {staffRoleName}");
-									foreach (var name in staff)
-									{
-										Console.WriteLine(name);
-									}
-								}
-							}
-						}
-						else
-						{
-							Console.WriteLine("Invalid choice");
-						}
-					}
-				}
-				else
-				{
-					Console.WriteLine("Invalid choice");
-				}
-			}
-		}
+                                    Console.WriteLine($"{staff.Count} staff as {staffRoleName}");
+                                    foreach (var name in staff)
+                                    {
+                                        Console.WriteLine(name);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid choice");
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid choice");
+                }
+            }
+        }
 
-		public static void DisplayStudents()
-		{
-			string connectionString = "your_connection_string_here";
+        public static void DisplayStudents()
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
 
-			using (var connection = new SqlConnection(connectionString))
-			{
-				connection.Open();
+                Console.WriteLine("Do you want to sort the students by first or last name?");
+                Console.WriteLine("1. First name");
+                Console.WriteLine("2. Last name");
+                string? sortChoice = Console.ReadLine();
+                Console.WriteLine("");
 
-				Console.WriteLine("Do you want to sort the students by first or last name?");
-				Console.WriteLine("1. First name");
-				Console.WriteLine("2. Last name");
-				string? sortChoice = Console.ReadLine();
-				Console.WriteLine("");
+                string orderBy = "";
+                string order = "";
 
-				string orderBy = "";
-				string order = "";
+                switch (sortChoice)
+                {
+                    case "1":
+                        orderBy = "FirstName";
+                        break;
+                    case "2":
+                        orderBy = "LastName";
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice");
+                        return;
+                }
 
-				switch (sortChoice)
-				{
-					case "1":
-						orderBy = "FirstName";
-						break;
-					case "2":
-						orderBy = "LastName";
-						break;
-					default:
-						Console.WriteLine("Invalid choice");
-						return;
-				}
+                Console.WriteLine("Do you want to sort the students in ascending or descending order?");
+                Console.WriteLine("1. Ascending");
+                Console.WriteLine("2. Descending");
+                string? orderChoice = Console.ReadLine();
+                Console.WriteLine("");
 
-				Console.WriteLine("Do you want to sort the students in ascending or descending order?");
-				Console.WriteLine("1. Ascending");
-				Console.WriteLine("2. Descending");
-				string? orderChoice = Console.ReadLine();
-				Console.WriteLine("");
+                switch (orderChoice)
+                {
+                    case "1":
+                        order = "ASC";
+                        break;
+                    case "2":
+                        order = "DESC";
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice");
+                        return;
+                }
 
-				switch (orderChoice)
-				{
-					case "1":
-						order = "ASC";
-						break;
-					case "2":
-						order = "DESC";
-						break;
-					default:
-						Console.WriteLine("Invalid choice");
-						return;
-				}
-
-				string query = $@"
+                string query = $@"
                 SELECT FirstName, LastName
                 FROM Students
                 ORDER BY {orderBy} {order}";
 
-				using (var command = new SqlCommand(query, connection))
-				using (var reader = command.ExecuteReader())
-				{
-					while (reader.Read())
-					{
-						string firstName = reader.GetString(0);
-						string lastName = reader.GetString(1);
-						Console.WriteLine($"{firstName} {lastName}");
-					}
-				}
-			}
-		}
+                using (var command = new SqlCommand(query, connection))
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string firstName = reader.GetString(0);
+                        string lastName = reader.GetString(1);
+                        Console.WriteLine($"{firstName} {lastName}");
+                    }
+                }
+            }
+        }
 
-		public static void DisplayAllCourses()
+        public static void DisplayAllCourses()
         {
             using (var context = new SchoolContext())
             {
